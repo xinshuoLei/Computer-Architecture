@@ -19,7 +19,25 @@ unsigned char *extractMessage(const unsigned char *message_in, int length) {
         message_out[i] = 0;
     }
 
-    // TODO: write your code here
+    
+    // TODO: write your code here 
+
+    for (int x = 0; x < length; x+=8) {
+        unsigned mask = 00000001;
+        for (int z = 0; z < 8; z++) {
+            unsigned char message = 0;
+            for (int y = 7; y >= 0; y--) {
+                unsigned char singleChar = message_in[y + x];
+                unsigned single = singleChar & mask;
+                single = single >> z;
+                message += single << y;
+            } 
+            message_out[x + z] = message;
+            mask = mask << 1;
+        }
+    }
+
+
 
     return message_out;
 }
