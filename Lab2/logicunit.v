@@ -3,5 +3,12 @@ module logicunit(out, A, B, control);
     output      out;
     input       A, B;
     input [1:0] control;
+    wire w1, w2, w3, w4;
+    and   a1(w1, A, B);
+    or    o1(w2, A, B);
+    nor   no1(w3, A, B);
+    xor   xo1(w4, A, B);
+    mux4  m1(out, w1, w2, w3, w4, control);
+
 
 endmodule // logicunit
