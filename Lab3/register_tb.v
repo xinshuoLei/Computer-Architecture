@@ -24,7 +24,36 @@ module test;
 
         // Add your own testcases here!
 
-        # 700 $finish;
+        # 10
+          // try writing to the register when its disabled
+          enable = 0;
+          d = 10;
+
+        # 10
+          // try writing 20 to the register
+          enable = 1;
+          d = 20;
+
+        # 10
+          // try writing to the register when its disabled
+          enable = 0;
+          d = 15;
+
+        # 10
+          // reset the register
+          reset = 1;
+
+        # 10
+          // try writing 28 to the register
+          enable = 1;
+          d = 28;
+          reset = 0;
+
+        # 17
+          // reset the register when not on a positive edge
+          reset = 1;
+
+        # 10 $finish;
     end
     
     initial begin
