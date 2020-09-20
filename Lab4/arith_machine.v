@@ -9,13 +9,13 @@ module arith_machine(except, clock, reset);
     input       clock, reset;
 
     wire [31:0] inst;  
-    wire [31:0] PC = 32'h0;
-    wire [31:0] nextPC = 32'h0;
+    wire [31:0] PC;
+    wire [31:0] nextPC;
     wire [31:0] instruction;
 
     // DO NOT comment out or rename this module
     // or the test bench will break
-    register #(32) PC_reg(PC, nextPC, clock, 1'b1, 1'b0);
+    register #(32) PC_reg(PC, nextPC, clock, 1'b1, reset);
 
     // DO NOT comment out or rename this module
     // or the test bench will break
