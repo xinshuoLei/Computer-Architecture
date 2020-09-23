@@ -16,7 +16,10 @@
 // opcode        (input) - the opcode field from the instruction
 // funct         (input) - the function field from the instruction
 // zero          (input) - from the ALU
-//
+// 
+// included instructions:
+// add,sub, and, or, nor, xor, addi, andi, ori, xori
+// bne, beq, j, jr, lui, slt, lw, lbu, sw, sb, addm
 
 module mips_decode(alu_op, writeenable, rd_src, alu_src2, except, control_type,
                    mem_read, word_we, byte_we, byte_load, slt, lui, addm,
@@ -28,5 +31,74 @@ module mips_decode(alu_op, writeenable, rd_src, alu_src2, except, control_type,
     output       mem_read, word_we, byte_we, byte_load, slt, lui, addm;
     input  [5:0] opcode, funct;
     input        zero;
+
+    wire r = (opcode == `OP_OTHER0);
+
+    wire add_ = r & (funct == `OP0_ADD);
+    wire sub_ = r & (funct == `OP0_SUB);
+    wire and_ = r & (funct == `OP0_AND);
+    wire or_  = r & (funct == `OP0_OR);
+    wire nor_ = r & (funct == `OP0_NOR);
+    wire xor_ = r & (funct == `OP0_XOR);
+
+    wire addi = (opcode == `OP_ADDI);
+    wire andi = (opcode == `OP_ANDI);
+    wire ori  = (opcode == `OP_ORI);
+    wire xori = (opcode == `OP_XORI);
+
+    wire bne  = (opcode == `OP_BNE);
+    wire beq  = (opcode == `OP_BEQ);
+    wire j    = (opcode == `OP_J);
+    wire lui_ = (opcode == `OP_LUI);
+    wire lw   = (opcode == `OP_LW); 
+    wire lbu  = (opcode == `OP_LBU);
+    wire sw   = (opcode == `OP_SW);
+    wire sb   = (opcode == `OP_SB);
+    
+    wire jr    = r & (funct == `OP0_JR);
+    wire slt_  = r & (funct == `OP0_SLT);
+    wire addm_ = r & (funct == `OP0_ADDM);
+
+
+    assign alu_op = (addi | add_ | lw | lbu | sw | sb | addm_) ? 2 :
+                    (sub_ | beq | bne | slt_)                  ? 3 :
+                    (andi | and_)                              ? 4 :
+                    (ori  | or_)                               ? 5 :
+                     nor_                                      ? 6:
+                    (xor_ | xori)                              ? 7 :
+                    0;
+
+    assign writeenable = add_ | sub_ | and_ | or_ | nor_ | xor_ | addi 
+                        | andi | ori | xori | lui_ | lw | lbu | slt_ | addm_;
+
+    assign rd_src      = ~r;
+
+    assign alu_src2 = (r | bne | beq | slt_ | addm_) ? 0 :
+                      (addi | lw | lbu | sw | sb)    ? 1 :
+                      2;
+    
+    assign except = ~(add_ | sub_ | and_ | or_ | nor_ | xor_ | addi | andi 
+                      | ori | xori | bne | beq | j | lui_ | lw | lbu | sw 
+                      | sb | jr | slt_ | addm_);
+
+    assign control_type  = ( (bne & ~zero) | (beq & zero) ) ? 1 :
+                            j          ? 2 :
+                            jr         ? 3 :
+                            0; 
+
+
+    assign mem_read    = lw | lbu | addm_;
+    assign word_we     = sw;
+    assign byte_we     = sb;
+    assign byte_load   = lbu;
+    
+    assign slt         = slt_;
+    assign lui         = lui_;
+    assign addm        = addm_;
+
+
+
+
+
 
 endmodule // mips_decode
