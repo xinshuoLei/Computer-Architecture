@@ -87,7 +87,7 @@ module mips_decode(alu_op, writeenable, rd_src, alu_src2, except, control_type,
                             0; 
 
 
-    assign mem_read    = lw | lbu | addm_;
+    assign mem_read    = lw | lbu;
     assign word_we     = sw;
     assign byte_we     = sb;
     assign byte_load   = lbu;
