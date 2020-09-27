@@ -32,7 +32,7 @@ main:
 	slt $9, $8, $7          # $9 = 0
 
 	# test sb then lb
-	la	$21, array	 # $1  = 0x10010000	testing lui
+	la	$21, array	 # $21  = 0x10010000	testing lui
 	sb  $17, 0($21)
 	lbu $20, 0($21)  # $20 = 13
 
