@@ -20,6 +20,7 @@ module full_machine(except, clock, reset);
 
     wire zero;
     wire negative;
+    wire overflow;
       
     wire [5:0] opcode = inst[31:26]; 
     wire [5:0] funct = inst[5:0];
@@ -79,7 +80,7 @@ module full_machine(except, clock, reset);
     regfile rf (a_data, b_data, rs, rt, w_addr, w_data, writeenable, clock, reset);
 
     wire [31:0] alu_out;
-    alu32 main_alu(alu_out, , zero, negative, alu_a, alu_b, alu_op);
+    alu32 main_alu(alu_out, overflow , zero, negative, alu_a, alu_b, alu_op);
 
 
     wire [31:0] mem_address;
@@ -92,7 +93,8 @@ module full_machine(except, clock, reset);
     wire [31:0] byte_data = {24'b0, byte_};
     mux2v #(32) load_byte(mem_result, mem_data, byte_data, byte_load);
 
-    wire [31:0] slt_input = {31'b0, negative};
+    wire slt_result = negative ^ overflow;
+    wire [31:0] slt_input = {31'b0, slt_result};
     wire [31:0] slt_output;
     mux2v #(32) slt_mux(slt_output, alu_out, slt_input, slt); 
 
