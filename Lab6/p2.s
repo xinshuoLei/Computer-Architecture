@@ -115,4 +115,67 @@ end_outer:
 # }
 .globl draw_gradient
 draw_gradient:
+
+    li      $v0, 0                          # num_changed = 0         
+    li      $t0, 0                          # $t0 = i       
+    
+outer_for:
+    bge		$t0, 15, end_outer_for          # if i >= 15, end outer
+    li      $t1, 0                          # $t1 = j
+
+
+inner_for:
+    bge     $t1, 15, end_inner_for          # if j >= 15, end inner
+
+    mul     $t2, $t0, 180                   # 180 = 15 * 12
+    mul     $t3, $t1, 12                    
+    add     $t2, $t2, $t3                   # $t2 = i*4*15 + j*4
+    add     $t2, $t2, $a0                   # $t2 = address for map[i][j]
+    lb      $t4, 0($t2)                     # $t4 = map[i][j].repr
+    move    $t7, $t4                        # $t7 = orig
+    lw      $t5, 4($t2)                     # $t5 = map[i][j].xdir
+    lw      $t6, 8($t2)                     # $t6 = map[i][j].ydir
+
+    bne     $t5, $zero, second_condition    # map[i][j].xdir == 0 
+    bne     $t6, $zero, second_condition    # map[i][j].ydir == 0
+    li      $t4, '.'
+    sb      $t4, 0($t2)                     # map[i][j].repr = '.'
+
+second_condition:
+    beq     $t5, $zero, third_condition     # map[i][j].xdir != 0
+    bne     $t6, $zero, third_condition     # map[i][j].ydir == 0 
+    li      $t4, '_'
+    sb      $t4, 0($t2)                     # map[i][j].repr = '_'
+
+third_condition:
+    bne     $t5, $zero, fourth_condition    # map[i][j].xdir == 0
+    beq     $t6, $zero, fourth_condition    # map[i][j].ydir != 0
+    li      $t4, '|'
+    sb      $t4, 0($t2)                     # map[i][j].repr = '|'
+
+fourth_condition:
+    mul     $t8, $t5, $t6                   # $t8 =  map[i][j].xdir * map[i][j].ydir
+    ble		$t8, $zero, fifth_condition     # map[i][j].xdir * map[i][j].ydir > 0
+    li      $t4, '/'
+    sb      $t4, 0($t2)                     # map[i][j].repr = '/'
+
+fifth_condition:
+    bge		$t8, $zero, compare_orig        # map[i][j].xdir * map[i][j].ydir > 0
+    li      $t4, 92
+    sb      $t4, 0($t2)                     # map[i][j].repr = '\'
+    
+compare_orig:
+    beq     $t4, $t7, continue              # map[i][j].repr != orig
+    add     $v0, $v0, 1
+
+continue:
+    add     $t1, $t1, 1
+    j       inner_for
+
+end_inner_for:
+    add     $t0, $t0, 1
+    j       outer_for
+
+
+end_outer_for:
     jr      $ra
