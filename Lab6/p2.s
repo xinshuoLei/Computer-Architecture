@@ -161,7 +161,7 @@ fourth_condition:
 
 fifth_condition:
     bge		$t8, $zero, compare_orig        # map[i][j].xdir * map[i][j].ydir > 0
-    li      $t4, 92
+    li      $t4, '\\'
     sb      $t4, 0($t2)                     # map[i][j].repr = '\'
     
 compare_orig:
