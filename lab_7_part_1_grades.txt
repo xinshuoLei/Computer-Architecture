@@ -1,17 +1,12 @@
 Grades for version committed on time
-	ast: 8.33 / 20
-			*Failed test: ast test 1 head_node->computed
-				*Timed out
-			*Failed test: ast test 1 return value
-				*Timed out
+	ast: 16.67 / 20
+			*Passed test: ast test 1 head_node->computed
+			*Passed test: ast test 1 return value
 			*Passed test: ast test 1 head_node->value
 			*Passed test: ast test 2 head_node->computed
-			*Failed test: ast test 2 return value
-				*Timed out
-			*Failed test: ast test 2 head_node->value
-				*Timed out
-			*Failed test: ast test 3 head_node->computed
-				*Timed out
+			*Passed test: ast test 2 return value
+			*Passed test: ast test 2 head_node->value
+			*Passed test: ast test 3 head_node->computed
 			*Failed test: ast test 3 return value
 				*Your output: 6
 		
@@ -22,6 +17,6 @@ Grades for version committed on time
 			*Passed test: ast test 4 return value
 			*Passed test: ast test 4 head_node->value
 		
-Total: 8.33 / 20
+Total: 16.67 / 20
 
-Final Score: 8.33 / 20
+Final Score: 16.67 / 20
