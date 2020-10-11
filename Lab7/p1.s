@@ -62,6 +62,7 @@
 .globl value
 value:
         bne     $a0, 0, not_null
+        li      $v0, 0
         jr      $ra 
 
 not_null:
