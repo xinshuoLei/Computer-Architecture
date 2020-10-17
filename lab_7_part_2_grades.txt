@@ -1,0 +1,25 @@
+Grades for version committed on time
+	dominosa: 67.69 / 80
+			*Passed test: domino puzzle 1
+			*Failed test: domino puzzle 2
+				*Error running test: 
+					Exception occurred at PC=0x0040090c
+					  Arithmetic overflow
+			*Passed test: domino puzzle 3
+			*Failed test: domino puzzle 4
+				*Error running test: 
+					Exception occurred at PC=0x0040090c
+					  Arithmetic overflow
+			*Passed test: domino puzzle 5
+			*Passed test: domino puzzle 6
+			*Passed test: domino puzzle 7
+			*Passed test: domino puzzle 8
+			*Passed test: domino puzzle 9
+			*Passed test: domino puzzle 10
+			*Passed test: domino puzzle 11
+			*Passed test: domino puzzle 12
+			*Passed test: domino puzzle 13
+		
+Total: 67.69 / 80
+
+Final Score: 67.69 / 80
