@@ -36,12 +36,9 @@ module cp0(rd_data, EPC, TakenInterrupt,
     wire[31:0] status_register = {16'b0, w_user_status[15:8], 6'b0, w_exception_level, w_user_status[0]};
     wire[31:0] cause_register = {16'b0, TimerInterrupt, 15'b0};
 
-    wire[31:0] zero = 32'b0;
-    mux32v rd_data_mux(rd_data, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, 
-                        zero, status_register, cause_register, {EPC, 2'b0}, zero, zero, zero, zero, 
-                        zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, zero, regnum);
-
-
-
+    assign rd_data = (regnum == `STATUS_REGISTER) ? status_register :
+                     (regnum == `CAUSE_REGISTER) ? cause_register :
+                     (regnum == `EPC_REGISTER) ? {EPC, 2'b0} :
+                     0;
 
 endmodule
