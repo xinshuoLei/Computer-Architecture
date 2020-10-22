@@ -52,7 +52,7 @@ main:
         li      $t3, 1
         li      $t2, 1
         sw      $t2, ANGLE_CONTROL($0)
-        li      $t1, 1
+        li      $t1, 10
         sw      $t1, VELOCITY($0)
 check_position:
         lw      $t1, BOT_X($0)
