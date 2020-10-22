@@ -52,7 +52,7 @@ main:
         li      $t3, 1
         li      $t2, 1
         sw      $t2, ANGLE_CONTROL($0)
-        li      $t1, 5
+        li      $t1, 1
         sw      $t1, VELOCITY($0)
 check_position:
         lw      $t1, BOT_X($0)
@@ -98,32 +98,63 @@ point6:
         sw      $t0, ANGLE($0)
         sw      $t3, ANGLE_CONTROL($0)
 corn2:
-        bne     $t1, 84, continue
-        bne     $t2, 236, continue
+        bne     $t1, 84, point7
+        bne     $t2, 236, point7
         sw      $t3, PICKUP($0)
         li      $t0, 0
         sw      $t0, ANGLE($0)
         sw      $t3, ANGLE_CONTROL($0)
+        li      $t4, 1                                  # corn2 picked up
 point7:
         bne     $t1, 92, point8
         bne     $t2, 236, point8
+        bne     $t4, 1, point8
         li      $t0, 315
         sw      $t0, ANGLE($0)
         sw      $t3, ANGLE_CONTROL($0)
 point8:
         bne     $t1, 132, point9
         bne     $t2, 196, point9
+        bne     $t4, 1, point9
         li      $t0, 0
         sw      $t0, ANGLE($0)
         sw      $t3, ANGLE_CONTROL($0)
 point9:
-        bne     $t1, 164, continue
-        bne     $t2, 196, continue
-        li      $t0, 135
+        bne     $t1, 164, point10
+        bne     $t2, 196, point10
+        li      $t0, 45
         sw      $t0, ANGLE($0)
         sw      $t3, ANGLE_CONTROL($0)
-
-
+point10:
+        bne     $t1, 188, corn3
+        bne     $t2, 220, corn3
+        li      $t0, 315
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+corn3:
+        bne     $t1, 220, point11
+        bne     $t2, 188, point11
+        sw      $t3, PICKUP($0)
+        li      $t0, 45
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+point11:
+        bne     $t1, 244, point12
+        bne     $t2, 212, point12
+        li      $t0, 90
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+point12:
+        bne     $t1, 244, corn4
+        bne     $t2, 236, corn4
+        li      $t0, 45
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+corn4:
+        bne     $t1, 284, continue
+        bne     $t2, 276, continue
+        sw      $t3, PICKUP($0)
+        sw      $0,  VELOCITY($0)       
 
 continue:
         j       check_position
