@@ -48,9 +48,91 @@ main:
 	    mtc0    $t4, $12
 
 #Fill in your code here
+        sw      $0,  ANGLE($0)
+        li      $t3, 1
+        li      $t2, 1
+        sw      $t2, ANGLE_CONTROL($0)
+        li      $t1, 5
+        sw      $t1, VELOCITY($0)
+check_position:
+        lw      $t1, BOT_X($0)
+        lw      $t2, BOT_Y($0)
+point1:
+        bne     $t1, 12, point2
+        bne     $t2, 4, point2
+        li      $t0, 45
+        sw      $t0,  ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+point2:
+        bne     $t1, 76, point3
+        bne     $t2, 68, point3
+        li      $t0, 90
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+point3:
+        bne     $t1, 76, corn1
+        bne     $t2, 100, corn1
+        li      $t0, 45
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+corn1:
+        bne     $t1, 108, point4
+        bne     $t2, 132, point4
+        sw      $t3, PICKUP($0)
+point4:
+        bne     $t1, 132, point5
+        bne     $t2, 156, point5
+        li      $t0, 90
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+point5:
+        bne     $t1, 132, point6
+        bne     $t2, 196, point6
+        li      $t0, 135
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+point6: 
+        bne     $t1, 92, corn2
+        bne     $t2, 236, corn2
+        li      $t0, 180
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+corn2:
+        bne     $t1, 84, continue
+        bne     $t2, 236, continue
+        sw      $t3, PICKUP($0)
+        li      $t0, 0
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+point7:
+        bne     $t1, 92, point8
+        bne     $t2, 236, point8
+        li      $t0, 315
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+point8:
+        bne     $t1, 132, point9
+        bne     $t2, 196, point9
+        li      $t0, 0
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+point9:
+        bne     $t1, 164, continue
+        bne     $t2, 196, continue
+        li      $t0, 135
+        sw      $t0, ANGLE($0)
+        sw      $t3, ANGLE_CONTROL($0)
+
+
+
+continue:
+        j       check_position
 
 infinite:
         j       infinite              # Don't remove this! If this is removed, then your code will not be graded!!!
+
+
+
 
 .kdata
 chunkIH:    .space 8  #TODO: Decrease this
