@@ -48,8 +48,9 @@ main:
 	    mtc0    $t4, $12
 
 #Fill in your code here
-        sub     $sp, $sp, 4 
+        sub     $sp, $sp, 8 
         sw      $s0, 0($sp)
+        sw      $ra, 4($sp)
 
         li      $s0, 0
 for____:    
@@ -70,7 +71,8 @@ wait:
 
 end_____:
         lw      $s0, 0($sp)
-        add     $sp, $sp, 4
+        lw      $ra, 4($sp)
+        add     $sp, $sp, 8
 
 # collect corns
 
