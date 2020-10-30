@@ -1,0 +1,7 @@
+Grades for version committed on time
+	pipelined_adding_machine test: 0 / 20
+		Failed to compile
+		
+Total: 0.0 / 20
+
+Final Score: 0.0 / 20
