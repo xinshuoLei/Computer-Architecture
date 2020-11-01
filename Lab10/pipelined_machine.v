@@ -21,20 +21,24 @@ module pipelined_machine(clk, reset);
     wire [31:0]  rd1_data, rd2_data_DE, rd2_data_MW, B_data, alu_out_data_DE, alu_out_data_MW, load_data, wr_data;
     wire [31:0]  rd1_data_after, rd2_data_original;
     wire         forwardA, forwardB;
+    wire         stall;
+    wire         flush;
 
     assign forwardA = RegWrite_MW & (wr_regnum_MW == rs) & (wr_regnum_MW != 0);
     assign forwardB = RegWrite_MW & (wr_regnum_MW == rt) & (wr_regnum_MW != 0);
+    assign stall = MemRead_MW & ((wr_regnum_MW == rt) | (wr_regnum_MW == rs)) & (wr_regnum_MW != 0);
+    assign flush = reset | PCSrc;
 
 
 
     // DO NOT comment out or rename this module
     // or the test bench will break
-    register #(30, 30'h100000) PC_reg(PC[31:2], next_PC[31:2], clk, /* enable */1'b1, reset);
+    register #(30, 30'h100000) PC_reg(PC[31:2], next_PC[31:2], clk, /* enable */~stall, reset);
 
     assign PC[1:0] = 2'b0;  // bottom bits hard coded to 00
     adder30 next_PC_adder(PC_plus4_IF, PC[31:2], 30'h1);
 
-    register #(30) pc_plus4(PC_plus4_DE, PC_plus4_IF, clk, 1'b1, reset);
+    register #(30) pc_plus4(PC_plus4_DE, PC_plus4_IF, clk, ~stall, flush);
 
     adder30 target_PC_adder(PC_target, PC_plus4_DE, imm[29:0]);
     mux2v #(30) branch_mux(next_PC, PC_plus4_IF, PC_target, PCSrc);
@@ -43,15 +47,15 @@ module pipelined_machine(clk, reset);
     // DO NOT comment out or rename this module
     // or the test bench will break
     instruction_memory imem(inst_IF, PC[31:2]);
-    register inst(inst_DE, inst_IF, clk, 1'b1, reset);
+    register inst(inst_DE, inst_IF, clk, ~stall, flush);
 
     mips_decode decode(ALUOp, RegWrite_DE, BEQ, ALUSrc, MemRead_DE, MemWrite_DE, MemToReg_DE, RegDst,
                       opcode, funct);
 
-    register #(1) regwrite(RegWrite_MW, RegWrite_DE, clk, 1'b1, reset);
-    register #(1) memRead(MemRead_MW, MemRead_DE, clk, 1'b1, reset);
-    register #(1) memWrite(MemWrite_MW, MemWrite_DE, clk, 1'b1, reset);
-    register #(1) memToReg(MemToReg_MW, MemToReg_DE, clk, 1'b1, reset);
+    register #(1) regwrite(RegWrite_MW, RegWrite_DE, clk, 1'b1, reset | stall);
+    register #(1) memRead(MemRead_MW, MemRead_DE, clk, 1'b1, reset || stall);
+    register #(1) memWrite(MemWrite_MW, MemWrite_DE, clk, 1'b1, reset | stall);
+    register #(1) memToReg(MemToReg_MW, MemToReg_DE, clk, 1'b1, reset | stall);
     // register #(1) regDst(RegDst_MW, RegDst_DE, clk, 1'b1, reset);
 
     // DO NOT comment out or rename this module
@@ -61,11 +65,11 @@ module pipelined_machine(clk, reset);
                RegWrite_MW, clk, reset);
 
     mux2v rd1(rd1_data_after, rd1_data, alu_out_data_MW, forwardA);
-    mux2v rd2(rd2_data_DE, rd2_data_original, alu_out_data_DE, forwardB);
+    mux2v rd2(rd2_data_DE, rd2_data_original, alu_out_data_MW, forwardB);
 
     mux2v #(32) imm_mux(B_data, rd2_data_DE, imm, ALUSrc);
 
-    register rd2_data(rd2_data_MW, rd2_data_DE, clk, 1'b1, reset);
+    register rd2_data(rd2_data_MW, rd2_data_DE, clk, 1'b1, reset | stall);
 
     alu32 alu(alu_out_data_DE, zero, ALUOp, rd1_data_after, B_data);
 
@@ -73,11 +77,11 @@ module pipelined_machine(clk, reset);
     // or the test bench will break
     data_mem data_memory(load_data, alu_out_data_MW, rd2_data_MW, MemRead_MW, MemWrite_MW, clk, reset);
 
-    register alu_data(alu_out_data_MW, alu_out_data_DE, clk, 1'b1, reset);
+    register alu_data(alu_out_data_MW, alu_out_data_DE, clk, 1'b1, reset | stall);
 
     mux2v #(32) wb_mux(wr_data, alu_out_data_MW, load_data, MemToReg_MW);
     mux2v #(5) rd_mux(wr_regnum_DE, rt, rd, RegDst);
 
-    register #(5) wr_rehnum(wr_regnum_MW, wr_regnum_DE, clk, 1'b1, reset);
+    register #(5) wr_regnum(wr_regnum_MW, wr_regnum_DE, clk, 1'b1, reset | stall);
 
 endmodule // pipelined_machine
