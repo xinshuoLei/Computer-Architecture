@@ -25,7 +25,7 @@ uint32_t extract_index(uint32_t address, const CacheConfig& cache_config) {
 uint32_t extract_block_offset(uint32_t address, const CacheConfig& cache_config) {
   // TODO
   if (cache_config.get_num_block_offset_bits() < 32) {
-    uint32_t offset_bits = (1 << cache_config.get_num_index_bits()) - 1;
+    uint32_t offset_bits = (1 << cache_config.get_num_block_offset_bits()) - 1;
     return (offset_bits & address);
   }
   return address;
