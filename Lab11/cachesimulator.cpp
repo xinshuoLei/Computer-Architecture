@@ -11,6 +11,17 @@ Cache::Block* CacheSimulator::find_block(uint32_t address) const {
    * 3. If you find the block, increment `_hits` and return a pointer to the
    *    block. Otherwise, return NULL.
    */
+  uint32_t index = extract_index(address, _cache -> get_config());
+  uint32_t tag = extract_tag(address, _cache -> get_config());
+  vector<Cache::Block*> blocks = _cache -> get_blocks_in_set(index);
+
+  for (size_t i = 0; i < blocks.size(); i++) {
+    if (blocks[i] -> get_tag() == tag && blocks[i] -> is_valid()) {
+      _hits++;
+      return blocks[i];
+    }
+  }
+
   return NULL;
 }
 
@@ -27,7 +38,36 @@ Cache::Block* CacheSimulator::bring_block_into_cache(uint32_t address) const {
    * 4. Update the `block`'s tag. Read data into it from memory. Mark it as
    *    valid. Mark it as clean. Return a pointer to the `block`.
    */
-  return NULL;
+  uint32_t index = extract_index(address, _cache -> get_config());
+  uint32_t tag = extract_tag(address, _cache -> get_config());
+  vector<Cache::Block*> blocks = _cache -> get_blocks_in_set(index);
+  uint32_t last_time = blocks[0] -> get_last_used_time();
+  Cache::Block* LRU = blocks[0];
+
+  for (size_t i = 0; i < blocks.size(); i++) {
+    // if find invalid
+    if (!blocks[i] -> is_valid()) {
+      blocks[i]-> set_tag(tag);
+      blocks[i] -> read_data_from_memory(_memory);
+      blocks[i] -> mark_as_valid();
+      blocks[i] -> mark_as_clean();
+      return blocks[i];
+    } 
+    // find LRU
+    else if (blocks[i] -> get_last_used_time() < last_time) { 
+      last_time = blocks[i] -> get_last_used_time();
+      LRU = blocks[i];    
+    }
+  }
+
+  if (LRU -> is_dirty()) {
+    LRU -> write_data_to_memory(_memory);
+  }
+  LRU-> set_tag(tag);
+  LRU -> read_data_from_memory(_memory);
+  LRU -> mark_as_valid();
+  LRU -> mark_as_clean();
+  return LRU;
 }
 
 uint32_t CacheSimulator::read_access(uint32_t address) const {
@@ -39,7 +79,17 @@ uint32_t CacheSimulator::read_access(uint32_t address) const {
    * 3. Update the `last_used_time` for the `block`.
    * 4. Use `read_word_at_offset` to return the data at `address`.
    */
-  return 0;
+  Cache::Block* block = find_block(address);
+  uint32_t offset = extract_block_offset(address, _cache -> get_config());
+  
+  if (block == NULL) {
+    block = bring_block_into_cache(address);
+  }
+
+  _use_clock++;
+  block -> set_last_used_time(_use_clock.get_count());
+  
+  return block -> read_word_at_offset(offset);
 }
 
 void CacheSimulator::write_access(uint32_t address, uint32_t word) const {
