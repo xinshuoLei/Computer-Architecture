@@ -6,6 +6,10 @@ t6(float *restrict A, float *restrict D) {
         A[0] = 0;
         for (int i = 0; i < (LEN6 - 3); i ++) {
             A[i] = D[i] + (float) 1.0;
+            // D[i + 3] = A[i] + (float) 2.0;
+        }
+        for (int i = 0; i < (LEN6 - 3); i ++) {
+            // A[i] = D[i] + (float) 1.0;
             D[i + 3] = A[i] + (float) 2.0;
         }
     }
