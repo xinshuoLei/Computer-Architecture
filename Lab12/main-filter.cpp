@@ -60,6 +60,7 @@ int main(int argc, char **argv) {
     printf("Elapsed CPU time with none is %lf seconds\n",
            (((double) c2) - c1) / CLOCKS_PER_SEC);
     int print_pixel = random() % SIZE;
+    // int correct_result = image2[print_pixel]->x;
     printf("Image %d \n", image2[print_pixel]->x);
 
     c1 = clock();
@@ -73,4 +74,16 @@ int main(int argc, char **argv) {
     // Print a random element so that the compiler does not remove the
     // computation above
     printf("Image %d \n", image2[print_pixel]->x);
+    /**
+    bool matches = true;
+    for (int i = 0; i < SIZE; i ++) {
+        for (int j = 0; j < SIZE; j ++) {
+            if (image2[print_pixel]->x != correct_result) {
+                matches = false;
+                break;
+            }
+        }
+    }
+    printf("the transformed images %s\n", matches ? "match" : "don't match");
+    */
 }

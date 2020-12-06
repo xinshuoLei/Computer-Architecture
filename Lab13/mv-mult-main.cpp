@@ -1,6 +1,7 @@
 #include "mv-mult.h"
 #include <math.h> // useful for result comparison
 #include <stdio.h>
+#include <iostream>
 #include <sys/time.h>
 
 // this scary-looking thing is a function pointer -
@@ -59,6 +60,15 @@ main(int argc, char **argv) {
     // instead of direct equality - 0.001 works well for the magnitudes involved here
     // http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
     // is a long but classic read
-
+    float* ret_scalar = mv_mult_scalar(mat, vec);
+    float* ret_vector = mv_mult_vector(mat, vec);
+    for (int i = 0; i < SIZE; i++) {
+        if (abs(ret_scalar[i] - ret_vector[i] > 0.001)) {
+            std::cout << "results don't match in " << i << std::endl;
+            std::cout << "scarlar: " << ret_scalar[i] << std::endl;
+            std::cout << "vector: " << ret_vector[i] << std::endl;
+        }
+    }
+    
     return 0;
 }
